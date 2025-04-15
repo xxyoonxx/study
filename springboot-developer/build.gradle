@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.5'
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'me.yoon'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly 'com.h2database:h2:2.2.224'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // JJWT API
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    // JJWT 구현체
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    // JSON 처리 (Jackson 사용)
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // 또는 jjwt-gson
+
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+}
+
+test {
+    useJUnitPlatform()
+}
