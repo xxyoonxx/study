@@ -1,4 +1,5 @@
 import React from 'react';
+import {useProductContext} from "../contexts/ProductContext"
 import {useState, useRef} from "react";
 import { Link } from "react-router-dom"
 
@@ -74,14 +75,7 @@ const ProductItem = ({product, onDelete, onUpdate}: ProductItemProps)=> {
 }
 
 function HomePage() {
-    const [products, setProducts] = useState<ProductType[]>([
-        {
-            id:0,
-            name: "계란",
-            explanation: "신선한 계란",
-            price: 9000,
-        },
-    ])
+    const [products, setProducts] = useProductContext()
     const [name, setName] = useState('')
     const [explanation, setExplanation] = useState('')
     const [price, setPrice] = useState(0)
@@ -107,10 +101,6 @@ function HomePage() {
         setProducts(products.map((product)=>(
             product.id===updateProduct.id ? updateProduct : product
         )))
-    }
-
-    const showId = (id:number) => {
-        alert(id)
     }
 
     return (
