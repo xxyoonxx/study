@@ -1,10 +1,10 @@
 import React from 'react';
 import {useProductContext} from "../contexts/ProductContext"
-import {useState, useRef} from "react";
+import {useState, useRef, useEffect} from "react";
 import { Link } from "react-router-dom"
 
 interface ProductType {
-    id: number
+    id: string
     name: string
     explanation: string
     price: number
@@ -12,7 +12,7 @@ interface ProductType {
 
 interface ProductItemProps {
     product: ProductType
-    onDelete: (id:number) => void
+    onDelete: (id:string) => void
     onUpdate: (product: ProductType) => void
 }
 
@@ -75,32 +75,59 @@ const ProductItem = ({product, onDelete, onUpdate}: ProductItemProps)=> {
 }
 
 function HomePage() {
-    const [products, setProducts] = useProductContext()
+    const [products, setProducts] = useState<ProductType[]>([])
     const [name, setName] = useState('')
     const [explanation, setExplanation] = useState('')
     const [price, setPrice] = useState(0)
 
     const fakeId = useRef(0)
+
+    useEffect(()=>{
+        fetch('/product')
+            .then((response)=>response.json())
+            .then((data) => {
+                console.log(data)
+                setProducts(data.products)
+            })
+    },[])
+
     const handleCreate = (newProduct: Omit<ProductType, 'id'>) => {
-        fakeId.current += 1
-        setProducts([...products, {
-            ...newProduct,
-            id: fakeId.current,
-        }])
+        fetch('/product', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newProduct),
+        }).then((response) => response.json())
+            .then((data) => {
+                setProducts((prev) => [...prev, data.product])
+            })
     }
 
-    const handleDelete = (id: number) =>
-        setProducts(products.filter((product)=>product.id !== id))
+    const handleDelete = (id: string) =>
+        fetch('/product/${id}',{
+            method: "DELETE",
+        }).then((response) => {
+            if (response.ok) {
+                setProducts(products.filter((product)=> product.id !== id))
+            }
+        })
 
-    const handleUpdate = (updateProduct:{
-        id:number
-        name:string
-        explanation:string
-        price:number
-    }) => {
-        setProducts(products.map((product)=>(
-            product.id===updateProduct.id ? updateProduct : product
-        )))
+
+    const handleUpdate = (updateProduct:ProductType) => {
+        fetch('/product/${updateProduct.id}', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateProduct)
+        }).then((response) => {
+            if (response.ok) {
+                setProducts(products.map((product)=>(
+                    product.id===updateProduct.id ? updateProduct : product
+                )))
+            }
+        })
     }
 
     return (
@@ -125,12 +152,14 @@ function HomePage() {
                 <input type="submit" placeholder="상품 만들기" />
             </form>
             {products.map((product)=>(
-                <ProductItem
-                    key={product.id}
-                    product={product}
-                    onDelete={handleDelete}
-                    onUpdate={handleUpdate}
-                />
+                <p>
+                    <ProductItem
+                        key={product.id}
+                        product={product}
+                        onDelete={handleDelete}
+                        onUpdate={handleUpdate}
+                    />
+                </p>
             ))}
         </>
     );
