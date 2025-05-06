@@ -1,12 +1,8 @@
+import { Box } from "@mui/material";
 import { useEffect, useState } from "react"
-import {useParams} from 'react-router-dom'
-
-type ProductType = {
-    id: string
-    name: string
-    explanation: string
-    price: number
-}
+import { API_SERVER_DOMAIN } from "../constants"
+import { useParams } from 'react-router-dom'
+import { ProductType } from "../types"
 
 function ProductPage() {
     const {productId} = useParams<{ productId: string }>()
@@ -24,6 +20,15 @@ function ProductPage() {
 
     return (
         <div>
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+                {product?.thumbnail && (
+                    <img
+                        src={`${API_SERVER_DOMAIN}/${product.thumbnail}`}
+                        alt={product?.name}
+                        style={{ width: "100%", maxWidth: 400 }}
+                    />
+                )}
+            </Box>
             <h1>{product?.name}</h1>
             <p>{product?.explanation}</p>
             <span>{product?.price}</span>
