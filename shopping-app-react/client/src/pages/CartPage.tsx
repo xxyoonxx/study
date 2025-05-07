@@ -12,15 +12,13 @@ import {
     Typography,
   } from "@mui/material";
   import { useState } from "react";
-  import { useCookies } from "react-cookie";
   import { useNavigate } from "react-router-dom";
   import { useCart } from "../hooks"
   import { CartItem } from "../components/cart";
-  import { ProductType } from "../types";
-  
+
   const CartPage = () => {
     const navigate = useNavigate();
-    const { cart } = useCart();
+    const { carts } = useCart();
   
     const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -42,12 +40,12 @@ import {
               <Typography variant="h4" sx={{ marginBottom: 2 }}>
                 장바구니
               </Typography>
-              {cart.length === 0 ? (
+              {carts.length === 0 ? (
                 <Typography variant="body1">
                   장바구니에 담긴 상품이 없습니다.
                 </Typography>
               ) : (
-                cart.map((cart) => <CartItem key={cart.id} cart={cart} />)
+                carts.map((cart) => <CartItem key={cart.id} cart={cart} />)
               )}
             </Grid>
   
