@@ -19,6 +19,8 @@ import {
   const CartPage = () => {
     const navigate = useNavigate();
     const { carts } = useCart();
+
+    const totalPrice = carts.reduce((prev, cur) => prev + (cur.price * cur.count), 0)
   
     const [isModalOpen, setIsModalOpen] = useState(false);
   

@@ -1,4 +1,3 @@
-// src/components/cart/CartItem.tsx
 import {
     Card,
     CardContent,
@@ -9,15 +8,18 @@ import {
   } from "@mui/material";
   import { Add, Delete, Remove } from "@mui/icons-material";
   import { grey } from "@mui/material/colors";
-  
+  import { useCart } from "../hooks"
+
   import type { ProductType } from "../../types";
   import { API_SERVER_DOMAIN } from "../../constants";
   
   type Props = {
-    cart: ProductType;
+    cart: ProductType & {count:number};
   };
   
   const CartItem = ({ cart }: Props) => {
+    const { changeCount } = useCart()
+
     return (
       <Card sx={{ display: "flex", marginBottom: 2 }}>
         {cart.thumbnail && (
@@ -36,11 +38,11 @@ import {
   
           <Grid container justifyContent="space-between">
             <Grid item>
-              <IconButton>
+              <IconButton onClick={() => changeCount(cart.id, "decrease")}>
                 <Remove />
               </IconButton>
               {0}
-              <IconButton>
+              <IconButton onClick={() => changeCount(cart.id, "increase")}>
                 <Add />
               </IconButton>
             </Grid>
