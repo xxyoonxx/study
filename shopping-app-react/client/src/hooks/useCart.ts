@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react"
 import { useCookies } from "react-cookie"
 import { ProductType } from "../types"
+import { getProduct } from "../utils/api"
 
 type CartType = ProductType & {count:number}
 
@@ -58,12 +59,12 @@ const useCart = () => {
             const requestList: Array<Promise<any>> = []
             const requestIds = productIds.reduce(
                 (acc, cur) => acc.set(cur, (acc.get(cur) || 0) +1),
-                new Map<String, number> ()
+                new Map<string, number> ()
             )
 
             // 배열화
             Array.from(requestIds.keys()).forEach((id) => {
-                requestList.push(getProductById(id))
+                requestList.push(getProduct(id))
             })
 
             Promise.all(requestList)

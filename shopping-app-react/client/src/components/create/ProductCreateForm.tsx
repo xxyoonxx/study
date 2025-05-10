@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThumbnailUploader } from ".";
 import { ProductType } from "../../types";
+import { createProduct, modifyThumbnail } from "../../utils/api"
 
 const ProductCreateForm = () => {
   const [name, setName] = useState("");
@@ -39,41 +40,18 @@ const ProductCreateForm = () => {
     setExplanation(event.target.value);
   };
 
-  const uploadThumbnailRequest = (productId: string, thumbnail: File) => {
-    const formData = new FormData();
-    formData.append("thumbnail", thumbnail);
-    return fetch(`/product/thumbnail/${productId}`, {
-      method: "PATCH",
-      body: formData,
-    });
-  };
-
-  const createProductRequest = (newProduct: Omit<ProductType, "id">) => {
-    return fetch("/product", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newProduct),
-    });
-  };
-
   const handleCreateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const response = await createProductRequest({
+    const { data: { product }} = await createProduct({
       name,
       explanation,
       price,
-    });
-    const data = await response.json();
+    })
 
     if (thumbnail) {
-      await uploadThumbnailRequest(data.product.id, thumbnail);
+      await modifyThumbnail(product.id, thumbnail);
     }
-
-    setCreatedProductId(data.product.id);
-    setIsModalOpen(true);
   };
 
   const handlePushProductPage = () => {

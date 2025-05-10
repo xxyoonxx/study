@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { PurchaseForm } from "../components/purchase";
+import { getProduct } from "../utils/api"
 
 import type { ProductType } from "../types";
 import { API_SERVER_DOMAIN } from "../constants";
@@ -23,9 +24,10 @@ const PurchasePage = () => {
   const [product, setProduct] = useState<ProductType | null>(null);
 
   useEffect(() => {
-    fetch(`/product/${productId}`)
-      .then((response) => response.json())
-      .then((data) => setProduct(data.product));
+    if(productId) {
+      getProduct(productId)
+      .then((response) => setProduct(response.data.product))
+    }
   }, [productId]);
 
   if (!product) {

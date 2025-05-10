@@ -1,48 +1,70 @@
-import { ProductType } from '../types'
+import axios, { type AxiosResponse } from "axios";
 
-export function getProducts() {
-    return fetch("/product")
-        .then((response) => response.json())
-        .then((response) => response.products)
-}
+import type { ProductType } from "../types";
 
-export function getProduct(id: string) {
-    return fetch('/product/${id}')
-        .then((response) => response.json())
-        .then((response) => response.products)
-}
 
-export const createProduct = (newProduct: Omit<ProductType, "id">) => {
-    return fetch("/product", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProduct),
-    })
-}
+type ReturnType<T> = Promise<AxiosResponse<T>>;
 
-export const modifyThumbnail = (productId: string, thumbnail: File) => {
-    const formData = new FormData()
-    formData.append("thumbnail", thumbnail)
-    return fetch(`/product/thumbnail/${productId}`, {
-        method: "PATCH",
-        body: formData,
-    })
-}
+export const getProducts = 
+async(): ReturnType<{ products: ProductType[] }> => {
+    try {
+        const response = await axios.get("/product")
+        return response
+    } catch(error) {
+        throw error
+    }
+};
 
-export const deleteProduct = (id:string) => {
-    fetch('/product/${id}', {
-        method: "DELETE",
-    })
-}
+export const getProduct =
+async(id: string): ReturnType<{ product: ProductType }> => {
+    try {
+        const response = axios.get(`/product/${id}`)
+        return response
+    } catch(error) {
+        throw error
+    }
+};
 
-export const modifyProduct = (updateProduct: ProductType) => {
-    fetch('/product/${updateProduct.id}', {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateProduct)
-    })
-}
+export const createProduct =
+async (newProduct: Omit<ProductType,"id"|"thumbnail">):
+ReturnType<{ product: ProductType}> => {
+    try {
+        const response = await axios.post("/product", newProduct)
+        return response
+    } catch(error) {
+        throw error
+    }
+};
+
+export const modifyThumbnail =
+async (productId: string, thumbnail: File):
+ReturnType<{ product: ProductType }> => {
+    try {
+        const formData = new FormData()
+        formData.append("thumbnail", thumbnail)
+
+        const response = axios.patch('/product/thumbnail/${productId}', FormData)
+        return response
+    } catch(error) {
+        throw error
+    }
+};
+
+export const deleteProduct = async(id: string) => {
+    try {
+        const response = await axios.delete('/product/${id}')
+        return response
+    } catch(error) {
+        throw error
+    }
+};
+
+export const modifyProduct = async(updateProduct: ProductType) => {
+    try {
+        const response = 
+        await axios.patch('/product/${updateProduct.id}', updateProduct)
+        return response
+    } catch(error) {
+        throw error
+    }
+};

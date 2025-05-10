@@ -17,6 +17,7 @@ import { ProductType } from "../types";
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
 import { useCart } from "../hooks";
+import { getProduct } from "../utils/api"
 import { API_SERVER_DOMAIN } from "../constants";
 
 const ProductPage = () => {
@@ -44,6 +45,13 @@ const ProductPage = () => {
   const handlePushCartPage = () => {
     navigate('/cart')
   }
+
+  useEffect(()=> {
+    if (productId) {
+      getProduct(productId)
+      .then((response) => setProduct(response.data.product))
+    }
+  })
 
   if (!productId) {
     return <>잘못된 페이지입니다.</>;
