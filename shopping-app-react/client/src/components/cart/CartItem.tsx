@@ -8,7 +8,7 @@ import {
   } from "@mui/material";
   import { Add, Delete, Remove } from "@mui/icons-material";
   import { grey } from "@mui/material/colors";
-  import { useCart } from "../hooks"
+  import { useCart } from "../../hooks"
 
   import type { ProductType } from "../../types";
   import { API_SERVER_DOMAIN } from "../../constants";
