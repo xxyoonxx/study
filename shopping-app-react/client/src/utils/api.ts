@@ -2,10 +2,9 @@ import axios, { type AxiosResponse } from "axios";
 
 import type { ProductType } from "../types";
 
-
 type ReturnType<T> = Promise<AxiosResponse<T>>;
 
-export const getProducts = 
+export const getProducts =
 async(): ReturnType<{ products: ProductType[] }> => {
     try {
         const response = await axios.get("/product")
@@ -43,7 +42,7 @@ ReturnType<{ product: ProductType }> => {
         const formData = new FormData()
         formData.append("thumbnail", thumbnail)
 
-        const response = axios.patch('/product/thumbnail/${productId}', FormData)
+        const response = axios.patch(`/product/thumbnail/${productId}`, formData)
         return response
     } catch(error) {
         throw error
@@ -52,7 +51,7 @@ ReturnType<{ product: ProductType }> => {
 
 export const deleteProduct = async(id: string) => {
     try {
-        const response = await axios.delete('/product/${id}')
+        const response = await axios.delete(`/product/${id}`)
         return response
     } catch(error) {
         throw error
@@ -61,8 +60,8 @@ export const deleteProduct = async(id: string) => {
 
 export const modifyProduct = async(updateProduct: ProductType) => {
     try {
-        const response = 
-        await axios.patch('/product/${updateProduct.id}', updateProduct)
+        const response =
+        await axios.patch(`/product/${updateProduct.id}`, updateProduct)
         return response
     } catch(error) {
         throw error

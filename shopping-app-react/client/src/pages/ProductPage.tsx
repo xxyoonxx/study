@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -10,14 +11,15 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProductType } from "../types";
 
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
 import { useCart } from "../hooks";
-import { getProduct } from "../utils/api"
+import { deleteProduct, getProduct } from "../utils/api";
+import useAsync from "../hooks/useAsync";
+import { NotFoundPage } from ".";
 import { API_SERVER_DOMAIN } from "../constants";
 
 const ProductPage = () => {
@@ -25,7 +27,15 @@ const ProductPage = () => {
   const { productId } = useParams<{ productId: string }>();
   const { addCarts } = useCart()
 
-  const [product, setProduct] = useState<ProductType | null>(null);
+  const { loading: getProductLoading, data } = useAsync(() =>
+      getProduct(productId!)
+  );
+
+  const { request: deleteProductRequest, loading: deleteProductLoading } =
+      useAsync(() => deleteProduct(productId!), {
+        initialRequest: false,
+      });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -35,6 +45,10 @@ const ProductPage = () => {
       setIsModalOpen(true)
     }
   }
+
+  const handlePushHomePage = () => {
+    navigate(`/`);
+  };
 
   const handlePushPurchasePage = () => {
     if (productId) {
@@ -46,16 +60,16 @@ const ProductPage = () => {
     navigate('/cart')
   }
 
-  useEffect(()=> {
-    if (productId) {
-      getProduct(productId)
-      .then((response) => setProduct(response.data.product))
-    }
-  })
-
-  if (!productId) {
-    return <>잘못된 페이지입니다.</>;
+  const handleDeleteProduct = async() => {
+    setIsDeleteModal(false);
+    await deleteProductRequest();
+    handlePushHomePage();
   }
+
+  if (!productId || !data) return <NotFoundPage />;
+  if (getProductLoading || deleteProductLoading) return <CircularProgress />;
+
+  const product = data.data.product;
 
   return (
     <>

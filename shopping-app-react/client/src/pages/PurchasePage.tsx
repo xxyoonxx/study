@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
   Card,
   CardContent,
-  CardMedia,
+  CardMedia, CircularProgress,
   Container,
   Grid,
   Typography,
 } from "@mui/material";
 import { PurchaseForm } from "../components/purchase";
-import { getProduct } from "../utils/api"
 
-import type { ProductType } from "../types";
+import { getProduct } from "../utils/api"
+import useAsync from "../hooks/useAsync"
+import { NotFoundPage } from ".";
 import { API_SERVER_DOMAIN } from "../constants";
 
 type ParamsType = {
@@ -21,18 +21,12 @@ type ParamsType = {
 
 const PurchasePage = () => {
   const { productId } = useParams<ParamsType>();
-  const [product, setProduct] = useState<ProductType | null>(null);
+  const { data, loading } = useAsync(() => getProduct(productId));
 
-  useEffect(() => {
-    if(productId) {
-      getProduct(productId)
-      .then((response) => setProduct(response.data.product))
-    }
-  }, [productId]);
+  if (loading) return <CircularProgress />
+  if (!data) return <NotFoundPage />
 
-  if (!product) {
-    return <h1>찾으시는 상품이 없습니다.</h1>;
-  }
+  const product = data.data.product;
 
   return (
     <Container maxWidth="sm">

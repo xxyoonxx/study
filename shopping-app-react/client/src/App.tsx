@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import { Layout } from "./components/shared"
-import { HomePage, ProductCreatePage, ProductPage, PurchasePage, CartPage, NotFound } from "./pages"
+import { HomePage, ProductCreatePage, ProductPage, PurchasePage, CartPage, NotFoundPage } from "./pages"
 
 function App() {
     return (
@@ -11,7 +11,7 @@ function App() {
                 <Route path="cart" element={<CartPage/>} />
                 <Route path="product/:productId" element={<ProductPage/>}/>
                 <Route path="purchase/:productId" element={<PurchasePage/>}/>
-                <Route path="*" element={<NotFound/>} />
+                <Route path="*" element={<NotFoundPage/>} />
             </Routes>
         </Layout>
     )

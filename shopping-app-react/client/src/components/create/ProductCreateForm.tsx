@@ -1,4 +1,3 @@
-// ProductCreateForm.tsx
 import {
   Button,
   Container,
@@ -13,7 +12,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThumbnailUploader } from ".";
-import { ProductType } from "../../types";
+import useAsync from "../../hooks/useAsync";
 import { createProduct, modifyThumbnail } from "../../utils/api"
 
 const ProductCreateForm = () => {
@@ -40,18 +39,32 @@ const ProductCreateForm = () => {
     setExplanation(event.target.value);
   };
 
+  const { request: createProductRequest } = useAsync(createProduct, {
+    initialRequest: false,
+  });
+
+  const { request: thumbnailUploadRequest } = useAsync(modifyThumbnail, {
+    initialRequest: false,
+  });
+
   const handleCreateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const { data: { product }} = await createProduct({
+    const createProductResponse = await createProductRequest({
       name,
       explanation,
       price,
-    })
+    });
 
     if (thumbnail) {
-      await modifyThumbnail(product.id, thumbnail);
+      await thumbnailUploadRequest(
+          createProductResponse.data.product.id,
+          thumbnail
+      );
     }
+
+    setCreatedProductId(createProductResponse.data.product.id);
+    setIsModalOpen(true);
   };
 
   const handlePushProductPage = () => {
